@@ -1,5 +1,9 @@
 package com.myorg;
 
+import software.amazon.awscdk.services.s3.Bucket;
+import software.amazon.awscdk.services.s3.BucketEncryption;
+import software.amazon.awscdk.services.s3.BucketProps;
+import software.amazon.awscdk.services.ses.actions.S3;
 import software.constructs.Construct;
 import software.amazon.awscdk.Duration;
 import software.amazon.awscdk.Stack;
@@ -16,14 +20,12 @@ public class CdkWorkshopStack extends Stack {
     public CdkWorkshopStack(final Construct parent, final String id, final StackProps props) {
         super(parent, id, props);
 
-        final Queue queue = Queue.Builder.create(this, "CdkWorkshopQueue")
-                .visibilityTimeout(Duration.seconds(300))
-                .build();
+         new Bucket(this, "myBucketId", new BucketProps.Builder().
+                 versioned(true)
+                 .encryption(BucketEncryption.KMS_MANAGED)
+                 .build()
+                 );
 
-        final Topic topic = Topic.Builder.create(this, "CdkWorkshopTopic")
-            .displayName("My First Topic Yeah")
-            .build();
-
-        topic.addSubscription(new SqsSubscription(queue));
+        
     }
 }
